@@ -2224,7 +2224,7 @@
         }, 420);
       }, 11000);
 
-      // Rotate fun fact every 8 s, offset by 4 s
+      // Rotate fun fact every 10 s, offset by 4 s
       setTimeout(function () {
         setInterval(function () {
           var wrap = document.getElementById('fun-fact-wrap');
@@ -2235,7 +2235,7 @@
             textEl.textContent = funFacts[factIndex].text;
             wrap.classList.remove('fade-out-fact');
           }, 420);
-        }, 8000);
+        }, 10000);
       }, 4000);
     }
 
