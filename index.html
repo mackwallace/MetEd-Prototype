@@ -143,6 +143,20 @@
       flex-shrink: 0;
     }
 
+    .hero-cta-btn.secondary {
+      background: #fff;
+      color: #007FA3;
+      border: 2px solid #007FA3;
+      box-shadow: none;
+    }
+    .hero-cta-btn.secondary:hover {
+      background: #f0f8fb;
+      color: #005872;
+      border-color: #005872;
+      box-shadow: none;
+    }
+    #see-plan-btn { display: none; margin-left: 12px; }
+
     /* ── ACTION TILES ROW ── */
     .tiles-row {
       display: grid;
@@ -1006,6 +1020,12 @@
   <div class="hero-shelf">
     <a href="#" class="hero-cta-btn">
       Get My Learning Plan
+      <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+    <a href="learning-plan-results-v1.5.html" class="hero-cta-btn secondary" id="see-plan-btn">
+      See My Learning Plan
       <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
@@ -1996,6 +2016,11 @@
       if (submitBtn.textContent.trim().startsWith('Try')) {
         submitBtn.innerHTML = 'Generate My Learning Plan <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>';
       }
+    }
+
+    // Show "See My Learning Plan" if a completed plan is already in sessionStorage
+    if (sessionStorage.getItem('meted_learning_plan')) {
+      document.getElementById('see-plan-btn').style.display = 'inline-flex';
     }
 
     openBtn.addEventListener('click', function (e) { e.preventDefault(); openModal(); });
