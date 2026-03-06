@@ -1980,6 +1980,22 @@
     function closeModal() {
       modal.setAttribute('hidden', '');
       document.body.style.overflow = '';
+
+      // Stop any in-flight loading state so a fresh open starts clean
+      if (progressInterval) { clearInterval(progressInterval); progressInterval = null; }
+      progressValue    = 0;
+      responseReceived = false;
+      msgIndex         = 0;
+      factIndex        = 0;
+
+      // Reset modal panels back to form view for next open
+      document.getElementById('modal-loading').style.display = 'none';
+      document.getElementById('modal-ready').style.display   = 'none';
+      form.style.display      = 'block';
+      submitBtn.disabled  = false;
+      if (submitBtn.textContent.trim().startsWith('Try')) {
+        submitBtn.innerHTML = 'Generate My Learning Plan <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      }
     }
 
     openBtn.addEventListener('click', function (e) { e.preventDefault(); openModal(); });
