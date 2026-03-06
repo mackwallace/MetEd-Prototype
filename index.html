@@ -2161,6 +2161,15 @@
       loadingEl.style.display = 'block';
       document.querySelector('.modal-body').scrollTop = 0;
 
+      // Reset state so retries work cleanly
+      progressValue    = 0;
+      responseReceived = false;
+      msgIndex         = 0;
+      factIndex        = 0;
+      if (progressInterval) { clearInterval(progressInterval); progressInterval = null; }
+      document.getElementById('progress-fill-bar').style.width = '0%';
+      document.getElementById('progress-pct').textContent      = '0%';
+
       startProgress();
       startMessageRotation();
       fireWebhook(payload);
