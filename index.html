@@ -2338,25 +2338,47 @@
       try {
         if (CASSIDY_WEBHOOK_URL) {
           // ── LIVE MODE ─────────────────────────────────────────────────────
-          const response = await fetch(CASSIDY_WEBHOOK_URL, {
+          // Step 1: POST form to worker — gets back a sessionId immediately
+          const initResponse = await fetch(CASSIDY_WEBHOOK_URL, {
             method:  'POST',
-            headers: {
-              'Content-Type':  'application/json',
-              'Authorization': CASSIDY_API_KEY
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
           });
-          if (!response.ok) throw new Error('Webhook error: ' + response.status);
-          const raw  = await response.json();
-          const plan = transformCassidyPayload(raw);
-          sessionStorage.setItem('meted_learning_plan', JSON.stringify(plan));
+          if (!initResponse.ok) throw new Error('Webhook error: ' + initResponse.status);
+          const { sessionId } = await initResponse.json();
+          if (!sessionId) throw new Error('No sessionId returned');
+
+          // Step 2: Poll /results/:sessionId until Cassidy posts results back
+          var workerBase = CASSIDY_WEBHOOK_URL.replace(/\/$/, '');
+          var pollUrl    = workerBase + '/results/' + sessionId;
+          var maxAttempts = 60;   // 60 × 3s = 3 min max
+          var attempts    = 0;
+
+          while (attempts < maxAttempts) {
+            await new Promise(function(r) { setTimeout(r, 3000); });
+            attempts++;
+
+            var pollRes = await fetch(pollUrl);
+            if (!pollRes.ok) continue;
+
+            var result = await pollRes.json();
+            if (result.status === 'ready') {
+              var plan = transformCassidyPayload(result.data);
+              sessionStorage.setItem('meted_learning_plan', JSON.stringify(plan));
+              responseReceived = true;
+              if (progressValue >= 90) completeProgress();
+              return;
+            }
+          }
+
+          throw new Error('Timed out waiting for learning plan');
         } else {
           // ── SIMULATION MODE (no credentials set) ──────────────────────────
           await new Promise(function(resolve) { setTimeout(resolve, 15000); });
           sessionStorage.setItem('meted_learning_plan', JSON.stringify(PROTOTYPE_PLAN));
+          responseReceived = true;
+          if (progressValue >= 90) completeProgress();
         }
-        responseReceived = true;
-        if (progressValue >= 90) completeProgress();
       } catch (err) {
         showErrorState();
       }
