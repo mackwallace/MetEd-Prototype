@@ -2319,52 +2319,80 @@
     };
 
     // ── CASSIDY PAYLOAD → FLAT SCHEMA TRANSFORM ────────────────────────────
-    // Cassidy sends several fields as JSON strings — parse them safely first.
+    // Cassidy sends several fields as JSON strings. Some fields (Key Concepts,
+    // Key Terms) contain embedded JSON objects with unescaped inner quotes that
+    // break JSON.parse on the outer string. safeParse tries the full string
+    // first, then strips those fields and retries.
     function transformCassidyPayload(raw) {
       function safeParse(val) {
         if (val && typeof val === 'object') return val;
         if (typeof val !== 'string') return {};
-        // Strip occasional "json\n" prefix Cassidy prepends
-        var cleaned = val.replace(/^json\s*/i, '').trim();
-        try { return JSON.parse(cleaned); } catch(e) { return {}; }
+        // Strip markdown code-block markers Cassidy sometimes prepends
+        var cleaned = val.replace(/^```json\s*/i, '').replace(/^json\s*/i, '').replace(/```\s*$/g, '').trim();
+        // Attempt 1: straight parse
+        try { return JSON.parse(cleaned); } catch(ignore) {}
+        // Attempt 2: strip "Key Concepts" / "Key Terms" fields whose values
+        // are embedded JSON objects with unescaped quotes that break parsing
+        try {
+          var stripped = cleaned
+            .replace(/"Key Concepts"\s*:\s*"\{[^]*?\}"\s*,?/g, '')
+            .replace(/"Key Terms"\s*:\s*"\{[^]*?\}"\s*,?/g, '')
+            .replace(/,(\s*[}\]])/g, '$1');
+          return JSON.parse(stripped);
+        } catch(ignore) {}
+        return {};
       }
 
-      var user      = safeParse(raw.user);
-      var narrative = safeParse(raw.personalized_narrative);
+      // Extract user name — try JSON parse first, fall back to regex
+      var user = safeParse(raw.user);
+      var fullName = (user.name || '').trim();
+      if (!fullName && typeof raw.user === 'string') {
+        var m = raw.user.match(/"name"\s*:\s*"([^"]+)"/);
+        if (m) fullName = m[1].trim();
+      }
+      var firstName = fullName.split(/\s+/)[0] || 'there';
 
-      var fullName  = (user.name || '').trim() || 'there';
-      var firstName = fullName.split(' ')[0];
+      var narrative       = safeParse(raw.personalized_narrative);
+      var recommendations = safeParse(raw.course_recommendations);
 
       var welcomeSection = narrative['Welcome Section'] || {};
       var timeline       = narrative['Timeline']        || {};
       var transformation = narrative['Transformation']  || {};
 
-      // Extract the "X hours" portion before the first comma in Pace
       var pace    = timeline['Pace'] || '';
       var perWeek = pace.split(',')[0].trim();
 
-      // Curriculum detection: results page checks courses.length === 1 and title contains "curriculum"
-      var courses = (narrative['Courses'] || []).map(function(c) {
+      // Courses: prefer personalized_narrative, fall back to course_recommendations
+      var rawCourses = [];
+      if (narrative['Courses'] && narrative['Courses'].length) {
+        rawCourses = narrative['Courses'];
+      } else {
+        var next = recommendations['Next Courses']       || recommendations['next_courses']       || [];
+        var prog = recommendations['Progression Courses'] || recommendations['progression_courses'] || [];
+        rawCourses = next.concat(prog);
+      }
+
+      var courses = rawCourses.map(function(c) {
         return {
-          title:     c['Title']       || c.title       || '',
-          url:       c['URL']         || c.url          || '',
-          duration:  c['Duration']    || c.duration     || '',
-          level:     c['Skill Level'] || c.skill_level  || c.level || 'Basic',
-          rationale: c['Description'] || c.description  || c.rationale || ''
+          title:     c['Title']        || c['Course Title']     || c.title       || '',
+          url:       c['URL']          || c['Course URL']        || c.url         || '',
+          duration:  c['Duration']     || c.duration             || '',
+          level:     c['Skill Level']  || c.skill_level          || c.level       || 'Basic',
+          rationale: c['Description']  || c['Why Recommended']   || c.description || c.rationale || ''
         };
       });
 
       return {
         first_name:    firstName,
         plan_title:    'Your Personalized Learning Plan',
-        welcome:       welcomeSection['Introduction']       || '',
-        now:           transformation['Current State']      || '',
-        after:         transformation['Future State']       || '',
-        impact:        transformation['Impact/Result']      || '',
-        total_hours:   timeline['Total Hours']              || '',
+        welcome:       welcomeSection['Introduction']  || '',
+        now:           transformation['Current State'] || '',
+        after:         transformation['Future State']  || '',
+        impact:        transformation['Impact/Result'] || '',
+        total_hours:   timeline['Total Hours']         || '',
         per_week:      perWeek,
-        weeks:         timeline['Suggested Timeline']       || '',
-        timeline_note: narrative['Call to Action']          || '',
+        weeks:         timeline['Suggested Timeline']  || '',
+        timeline_note: narrative['Call to Action']     || '',
         courses:       courses
       };
     }
