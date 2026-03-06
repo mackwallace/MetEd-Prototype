@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Learning Plan | MetEd</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Poppins, "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 12px;
+      background: #F4F4F4;
+      color: #45494C;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding-bottom: 88px; /* clearance for sticky bar */
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.14);
+      position: sticky;
+      top: 0;
+      z-index: 200;
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 64px;
+    }
+    .brand-logo {
+      display: block;
+      width: 200px;
+      height: 54px;
+      background: url("https://learn.meted.ucar.edu/files/2a59c198-fcf4-4779-954f-446495fea88f/DepartmentTemplates/65262f34-bc28-4658-b343-1bce14aec61b/COMET_MetEd_gray_blue_200x54(1).png") no-repeat center/contain;
+      flex-shrink: 0;
+      text-indent: -9999px;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #007FA3;
+      text-decoration: none;
+      padding: 6px 0;
+    }
+    .back-link:hover { color: #005872; }
+    .back-link svg { width: 16px; height: 16px; }
+
+    /* ── PAGE CONTAINER ── */
+    .page-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 24px 48px;
+    }
+
+    /* ── HERO ── */
+    .plan-hero {
+      margin-bottom: 40px;
+    }
+    .plan-greeting {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1A658F;
+      line-height: 1.25;
+      margin-bottom: 6px;
+    }
+    .plan-subtitle {
+      font-size: 15px;
+      font-weight: 600;
+      color: #45494C;
+      margin-bottom: 16px;
+    }
+    .plan-welcome {
+      font-size: 13px;
+      color: #7D8082;
+      line-height: 1.7;
+      max-width: 640px;
+    }
+
+    /* ── SECTION LABELS ── */
+    .section-eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #007FA3;
+      margin-bottom: 16px;
+    }
+
+    /* ── TRANSFORMATION ── */
+    .transformation-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      padding: 28px 32px;
+      margin-bottom: 40px;
+    }
+    .transformation-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .transform-step {
+      display: flex;
+      gap: 20px;
+      position: relative;
+    }
+    .transform-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+      width: 36px;
+    }
+    .transform-dot {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .transform-dot.now    { background: #EEEEEE; }
+    .transform-dot.after  { background: rgba(0,127,163,0.12); }
+    .transform-dot.impact { background: rgba(14,134,82,0.12); }
+    .transform-connector {
+      width: 2px;
+      flex: 1;
+      min-height: 24px;
+      background: #E4E4E9;
+      margin: 4px auto;
+    }
+    .transform-body {
+      padding-bottom: 28px;
+      flex: 1;
+    }
+    .transform-step:last-child .transform-body { padding-bottom: 0; }
+    .transform-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .transform-label.now    { color: #7D8082; }
+    .transform-label.after  { color: #007FA3; }
+    .transform-label.impact { color: #0E8652; }
+    .transform-text {
+      font-size: 13px;
+      color: #45494C;
+      line-height: 1.7;
+    }
+
+    /* ── COURSES SECTION ── */
+    .courses-section { margin-bottom: 40px; }
+    .courses-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Course 1 — elevated */
+    .course-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+    .course-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.14); }
+
+    .course-card.primary {
+      border-left: 5px solid #1A658F;
+      box-shadow: 0 2px 8px rgba(18,20,22,0.13);
+    }
+    .course-card.primary:hover { box-shadow: 0 4px 16px rgba(18,20,22,0.18); }
+    .course-card.secondary { border-left: 4px solid #E4E4E9; }
+
+    .course-card-inner { padding: 20px 24px; }
+    .course-card.primary .course-card-inner { padding: 24px 28px; }
+
+    /* Card top row: badges */
+    .course-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 3px;
+    }
+    .badge-num-primary { background: #1A658F; color: #fff; }
+    .badge-num-secondary { background: #EEEEEE; color: #7D8082; }
+    .badge-start { background: #007FA3; color: #fff; }
+
+    .badge-level { padding: 3px 8px; border-radius: 3px; font-size: 10px; font-weight: 600; }
+    .level-basic        { background: rgba(14,134,82,0.1);   color: #0E8652; }
+    .level-intermediate { background: rgba(0,127,163,0.1);   color: #007FA3; }
+    .level-advanced     { background: rgba(190,90,9,0.1);    color: #BE5A09; }
+    .level-expert       { background: rgba(26,101,143,0.12); color: #1A658F; }
+
+    .course-title {
+      font-weight: 700;
+      color: #1A658F;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .course-card.primary .course-title { font-size: 16px; }
+    .course-card.secondary .course-title { font-size: 13px; color: #303335; }
+
+    .course-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 11px;
+      color: #7D8082;
+      margin-bottom: 12px;
+    }
+    .course-meta span { display: flex; align-items: center; gap: 4px; }
+    .course-meta svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+    .course-rationale {
+      line-height: 1.7;
+      color: #45494C;
+      margin-bottom: 16px;
+    }
+    .course-card.primary .course-rationale { font-size: 13px; }
+    .course-card.secondary .course-rationale { font-size: 12px; }
+
+    /* CTAs */
+    .course-cta-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #007FA3;
+      color: #fff;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 11px 22px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.18s;
+      width: 100%;
+      justify-content: center;
+    }
+    .course-cta-primary:hover { background: #005872; }
+    .course-cta-primary svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    .course-cta-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+      color: #007FA3;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border: 1.5px solid #007FA3;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.18s, color 0.18s;
+    }
+    .course-cta-secondary:hover { background: #007FA3; color: #fff; }
+    .course-cta-secondary svg { width: 13px; height: 13px; }
+
+    /* ── TIMELINE STRIP ── */
+    .timeline-card {
+      background: #1A658F;
+      border-radius: 8px;
+      padding: 24px 28px;
+      margin-bottom: 40px;
+    }
+    .timeline-card .section-eyebrow { color: rgba(255,255,255,0.6); margin-bottom: 20px; }
+    .timeline-stats {
+      display: flex;
+      gap: 0;
+    }
+    .timeline-stat {
+      flex: 1;
+      text-align: center;
+      padding: 0 12px;
+      border-right: 1px solid rgba(255,255,255,0.2);
+    }
+    .timeline-stat:first-child { padding-left: 0; }
+    .timeline-stat:last-child { border-right: none; padding-right: 0; }
+    .timeline-stat-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+    .timeline-stat-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.4;
+    }
+    .timeline-note {
+      margin-top: 16px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.6;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding-top: 14px;
+    }
+
+    /* ── STICKY BOTTOM BAR ── */
+    .sticky-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border-top: 1px solid #E4E4E9;
+      box-shadow: 0 -2px 12px rgba(0,0,0,0.1);
+      z-index: 100;
+      padding: 12px 24px;
+    }
+    .sticky-bar-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .sticky-bar-label {
+      font-size: 12px;
+      color: #7D8082;
+      line-height: 1.4;
+      flex: 1;
+      min-width: 0;
+    }
+    .sticky-bar-label strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #45494C;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sticky-bar-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #007FA3;
+      color: #fff;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 11px 22px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background 0.18s;
+      flex-shrink: 0;
+    }
+    .sticky-bar-btn:hover { background: #005872; }
+    .sticky-bar-btn svg { width: 14px; height: 14px; }
+
+    /* ── ENTRANCE ANIMATIONS ── */
+    html { scroll-behavior: smooth; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .plan-hero           { animation: fadeUp 0.5s ease 0.05s both; }
+    .section-eyebrow     { animation: fadeUp 0.5s ease 0.15s both; }
+    .transformation-card { animation: fadeUp 0.5s ease 0.22s both; }
+    .courses-section     { animation: fadeUp 0.5s ease 0.35s both; }
+    .timeline-card       { animation: fadeUp 0.5s ease 0.48s both; }
+
+    /* ── JUMP LINK ── */
+    .jump-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 18px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #007FA3;
+      text-decoration: none;
+      transition: color 0.15s, gap 0.15s;
+    }
+    .jump-link:hover { color: #005872; gap: 9px; }
+    .jump-link svg { width: 14px; height: 14px; }
+
+    /* ── TRUST STRIP ── */
+    .course-trust {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      font-size: 11px;
+      color: #7D8082;
+    }
+    .trust-dot { color: #D2D2D9; }
+
+    /* ── ENROLL TEXT LINKS (courses 2–5) ── */
+    .course-enroll-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #007FA3;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .course-enroll-link:hover { color: #005872; text-decoration: underline; }
+    .course-enroll-link svg { width: 12px; height: 12px; }
+
+    /* ── ADDITIONAL COURSES (6+) ── */
+    .additional-section { margin-top: 32px; }
+    .course-card-additional {
+      background: #fff;
+      border-radius: 8px;
+      border-left: 3px solid #C5C8CA;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      padding: 13px 18px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .additional-course-num { font-size: 10px; font-weight: 700; color: #9A9EA1; white-space: nowrap; }
+    .additional-course-title { flex: 1; font-size: 12px; font-weight: 600; color: #45494C; min-width: 120px; }
+    .additional-course-meta { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .page-wrap { padding: 24px 16px 40px; }
+      .plan-greeting { font-size: 22px; }
+      .transformation-card { padding: 20px; }
+      .course-card.primary .course-card-inner { padding: 18px 20px; }
+      .timeline-stats { flex-direction: column; gap: 16px; }
+      .timeline-stat { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.2); padding: 0 0 16px; text-align: left; }
+      .timeline-stat:last-child { border-bottom: none; padding-bottom: 0; }
+      .sticky-bar-label { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-inner">
+      <a href="dashboard-authenticated-experience-v1.6-working-prototype.html" class="brand-logo">MetEd</a>
+      <a href="dashboard-authenticated-experience-v1.6-working-prototype.html" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+        </svg>
+        Back to Dashboard
+      </a>
+    </div>
+  </header>
+
+  <div class="page-wrap">
+
+    <!-- Hero -->
+    <div class="plan-hero">
+      <div class="plan-greeting" id="plan-greeting">Hi Mike, your learning plan is ready.</div>
+      <div class="plan-subtitle" id="plan-subtitle">Your Satellite Meteorology Learning Plan</div>
+      <p class="plan-welcome" id="plan-welcome">As a weather enthusiast ready to explore meteorology from the ground up, you're about to master the satellite observation skills that power every weather forecast you see. This 5-course path transforms you from curious beginner to confident satellite imagery interpreter.</p>
+      <a href="#courses" class="jump-link">
+        View My Courses
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Transformation -->
+    <div class="section-eyebrow">Your Journey</div>
+    <div class="transformation-card">
+      <div class="transformation-flow">
+
+        <div class="transform-step">
+          <div class="transform-left">
+            <div class="transform-dot now">📍</div>
+            <div class="transform-connector"></div>
+          </div>
+          <div class="transform-body">
+            <div class="transform-label now">Where You Are Now</div>
+            <div class="transform-text" id="transform-now">Weather fascinates you, but satellite images look like abstract art — you can't distinguish clouds from land or understand what forecasters see when they interpret a loop.</div>
+          </div>
+        </div>
+
+        <div class="transform-step">
+          <div class="transform-left">
+            <div class="transform-dot after">🚀</div>
+            <div class="transform-connector"></div>
+          </div>
+          <div class="transform-body">
+            <div class="transform-label after">Where You're Headed</div>
+            <div class="transform-text" id="transform-after">You'll confidently read visible and infrared imagery, identify storm development patterns, and understand exactly what GOES and VIIRS satellites reveal about our atmosphere.</div>
+          </div>
+        </div>
+
+        <div class="transform-step">
+          <div class="transform-left">
+            <div class="transform-dot impact">⚡</div>
+          </div>
+          <div class="transform-body">
+            <div class="transform-label impact">Your Impact</div>
+            <div class="transform-text" id="transform-impact">You'll watch weather forecasts with true scientific literacy — spotting features, understanding the "why" behind predictions, and seeing the world through the same lens as professional meteorologists.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 5-Course Path -->
+    <div class="courses-section" id="courses">
+      <div class="section-eyebrow" id="courses-eyebrow">Your 5-Course Learning Path</div>
+      <div class="courses-stack" id="courses-stack">
+        <!-- Rendered by JS from sessionStorage plan data -->
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="section-eyebrow">Your Timeline</div>
+    <div class="timeline-card">
+      <div class="timeline-stats">
+        <div class="timeline-stat">
+          <div class="timeline-stat-value" id="timeline-total">5–7 hrs</div>
+          <div class="timeline-stat-label">Total learning time</div>
+        </div>
+        <div class="timeline-stat">
+          <div class="timeline-stat-value" id="timeline-per-week">2–3 hrs</div>
+          <div class="timeline-stat-label">Per week</div>
+        </div>
+        <div class="timeline-stat">
+          <div class="timeline-stat-value" id="timeline-weeks">3–4 wks</div>
+          <div class="timeline-stat-label">To complete</div>
+        </div>
+      </div>
+      <div class="timeline-note" id="timeline-note">All courses are free, self-paced, and designed for beginners. Complete them as your schedule allows — or accelerate to 1–2 weeks with more time. Your weather enthusiasm is about to become weather expertise.</div>
+    </div>
+
+    <!-- Additional Courses (6+, rendered by JS if needed) -->
+    <div class="additional-section" id="additional-section" style="display:none">
+      <div class="section-eyebrow">Additional Recommended Courses</div>
+      <div id="additional-courses-stack"></div>
+    </div>
+
+  </div><!-- /page-wrap -->
+
+  <!-- Sticky bottom bar -->
+  <div class="sticky-bar" id="sticky-bar">
+    <div class="sticky-bar-inner">
+      <div class="sticky-bar-label">
+        Ready to begin?
+        <strong id="sticky-bar-course-title">Course 1</strong>
+      </div>
+      <a href="#" target="_blank" class="sticky-bar-btn" id="sticky-bar-link">
+        Start Course 1
+        <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // ── FALLBACK DATA (Mike Henry) ──────────────────────────────────────────
+    var FALLBACK_PLAN = {
+      first_name: "Mike",
+      plan_title: "Your Satellite Meteorology Learning Plan",
+      welcome: "As a weather enthusiast ready to explore meteorology from the ground up, you're about to master the satellite observation skills that power every weather forecast you see. This 5-course path transforms you from curious beginner to confident satellite imagery interpreter.",
+      now: "Weather fascinates you, but satellite images look like abstract art — you can't distinguish clouds from land or understand what forecasters see when they interpret a loop.",
+      after: "You'll confidently read visible and infrared imagery, identify storm development patterns, and understand exactly what GOES and VIIRS satellites reveal about our atmosphere.",
+      impact: "You'll watch weather forecasts with true scientific literacy — spotting features, understanding the \"why\" behind predictions, and seeing the world through the same lens as professional meteorologists.",
+      total_hours: "5–7 hrs",
+      per_week: "2–3 hrs",
+      weeks: "3–4 wks",
+      timeline_note: "All courses are free, self-paced, and designed for beginners. Complete them as your schedule allows — or accelerate to 1–2 weeks with more time. Your weather enthusiasm is about to become weather expertise.",
+      courses: [
+        { title: "Basics of Visible and Infrared Remote Sensing", url: "https://learn.meted.ucar.edu/#/online-courses/485bf28c-6a1e-4cb5-8684-06c13c573d77", duration: "1.5–2 hours", level: "Basic", rationale: "You'll learn the physics behind how satellites capture weather data — what visible and infrared channels actually measure. This is your essential foundation: you can't interpret imagery until you understand what you're looking at and why it appears the way it does." },
+        { title: "Basic Satellite Imagery Interpretation", url: "https://learn.meted.ucar.edu/#/online-courses/fdadeb04-04d3-48c5-b3a2-cf6adeffb5a9", duration: "1.25–1.5 hours", level: "Basic", rationale: "Now you'll apply that physics knowledge to actually identify clouds, land, and water features in real satellite images. This is where theory becomes practical skill — you'll finally understand those weather channel satellite loops." },
+        { title: "GOES-R ABI: Next Generation Satellite Imaging", url: "https://learn.meted.ucar.edu/#/online-courses/45cf3482-1a8c-47ec-b23f-40b8e170d41f", duration: "1–1.25 hours", level: "Basic", rationale: "You'll explore the GOES-R satellites and their Advanced Baseline Imager — the primary tools forecasters use across the Western Hemisphere. Understanding GOES means understanding the backbone of modern U.S. weather observation." },
+        { title: "Introduction to VIIRS Imaging and Applications", url: "https://learn.meted.ucar.edu/#/online-courses/1bb36ddb-c878-4ec9-8e9a-6b4b67d8ac1d", duration: "0.75–1 hour", level: "Basic", rationale: "You'll discover the complementary polar-orbiting satellite system that provides high-resolution global coverage. Together with GOES, VIIRS completes your understanding of how satellites monitor Earth's entire atmosphere." },
+        { title: "Satellite Feature Identification: Cyclogenesis", url: "https://learn.meted.ucar.edu/#/online-courses/9079ca6f-bd8e-4453-92cf-3bc97b117a9e", duration: "0.5–0.75 hours", level: "Basic", rationale: "You'll put everything together to identify early signs of storm formation and development in satellite imagery. This real-world application lets you spot developing storms using the skills you've built — incredibly satisfying." }
+      ]
+    };
+
+    // ── HELPERS ─────────────────────────────────────────────────────────────
+    var LEVEL_CLASS = { Basic: 'level-basic', Intermediate: 'level-intermediate', Advanced: 'level-advanced' };
+    var CLOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+    var ARROW_SVG = '<svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+    function escapeHtml(str) {
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // ── CARD BUILDERS ────────────────────────────────────────────────────────
+
+    // Primary card (course 1 or a curriculum) — large, featured
+    function buildPrimaryCard(course, isCurriculum) {
+      var lvlClass     = LEVEL_CLASS[course.level] || 'level-basic';
+      var safeTitle    = escapeHtml(course.title);
+      var safeDuration = escapeHtml(course.duration);
+      var safeRationale = escapeHtml(course.rationale);
+      var safeUrl      = escapeHtml(course.url);
+      var safeLevel    = escapeHtml(course.level);
+      var badgeLabel   = isCurriculum ? 'Curriculum' : 'Course 1';
+      var ctaLabel     = isCurriculum ? 'Start This Curriculum' : 'Start Course 1';
+
+      return '<div class="course-card primary"><div class="course-card-inner">' +
+        '<div class="course-badges">' +
+          '<span class="badge badge-num-primary">' + badgeLabel + '</span>' +
+          (isCurriculum ? '' : '<span class="badge badge-start">Start Here</span>') +
+          '<span class="badge-level ' + lvlClass + '">' + safeLevel + '</span>' +
+        '</div>' +
+        '<div class="course-title">' + safeTitle + '</div>' +
+        '<div class="course-meta"><span>' + CLOCK_SVG + ' ' + safeDuration + '</span></div>' +
+        '<div class="course-rationale">' + safeRationale + '</div>' +
+        '<a href="' + safeUrl + '" target="_blank" class="course-cta-primary">' + ctaLabel + ' ' + ARROW_SVG + '</a>' +
+        '<div class="course-trust">' +
+          '<span>Free</span><span class="trust-dot">·</span>' +
+          '<span>Self-paced</span><span class="trust-dot">·</span>' +
+          '<span>' + safeDuration + '</span>' +
+        '</div>' +
+      '</div></div>';
+    }
+
+    // Secondary card (courses 2–5)
+    function buildSecondaryCard(course, index) {
+      var num      = index + 1;
+      var lvlClass = LEVEL_CLASS[course.level] || 'level-basic';
+      return '<div class="course-card secondary"><div class="course-card-inner">' +
+        '<div class="course-badges">' +
+          '<span class="badge badge-num-secondary">Course ' + num + '</span>' +
+          '<span class="badge-level ' + lvlClass + '">' + escapeHtml(course.level) + '</span>' +
+        '</div>' +
+        '<div class="course-title">' + escapeHtml(course.title) + '</div>' +
+        '<div class="course-meta"><span>' + CLOCK_SVG + ' ' + escapeHtml(course.duration) + '</span></div>' +
+        '<div class="course-rationale">' + escapeHtml(course.rationale) + '</div>' +
+        '<a href="' + escapeHtml(course.url) + '" target="_blank" class="course-enroll-link">+ Enroll in this course ' + ARROW_SVG + '</a>' +
+      '</div></div>';
+    }
+
+    // Additional course card (courses 6+) — compact row
+    function buildAdditionalCard(course, displayNum) {
+      var lvlClass = LEVEL_CLASS[course.level] || 'level-basic';
+      return '<div class="course-card-additional">' +
+        '<span class="additional-course-num">Course ' + displayNum + '</span>' +
+        '<span class="additional-course-title">' + escapeHtml(course.title) + '</span>' +
+        '<div class="additional-course-meta">' +
+          '<span class="badge-level ' + lvlClass + '">' + escapeHtml(course.level) + '</span>' +
+          '<span style="font-size:11px;color:#9A9EA1;display:flex;align-items:center;gap:3px;">' + CLOCK_SVG + ' ' + escapeHtml(course.duration) + '</span>' +
+          '<a href="' + escapeHtml(course.url) + '" target="_blank" class="course-enroll-link">+ Enroll ' + ARROW_SVG + '</a>' +
+        '</div>' +
+      '</div>';
+    }
+
+    // ── RENDER ──────────────────────────────────────────────────────────────
+    function renderPlan(data) {
+      var courses       = data.courses || [];
+      var isCurriculum  = courses.length === 1 && /curriculum/i.test(courses[0].title);
+      var primaryCount  = isCurriculum ? 1 : Math.min(courses.length, 5);
+      var extraCourses  = isCurriculum ? [] : courses.slice(5);
+
+      // Hero
+      document.getElementById('plan-greeting').textContent = 'Hi ' + data.first_name + ', your learning plan is ready.';
+      document.getElementById('plan-subtitle').textContent = data.plan_title;
+      document.getElementById('plan-welcome').textContent  = data.welcome;
+
+      // Transformation
+      document.getElementById('transform-now').textContent    = data.now;
+      document.getElementById('transform-after').textContent  = data.after;
+      document.getElementById('transform-impact').textContent = data.impact;
+
+      // Timeline
+      document.getElementById('timeline-total').textContent    = data.total_hours;
+      document.getElementById('timeline-per-week').textContent = data.per_week;
+      document.getElementById('timeline-weeks').textContent    = data.weeks;
+      document.getElementById('timeline-note').textContent     = data.timeline_note;
+
+      // Section eyebrow
+      document.getElementById('courses-eyebrow').textContent = isCurriculum
+        ? 'Your Recommended Curriculum'
+        : 'Your ' + primaryCount + '-Course Learning Path';
+
+      // Course cards
+      var stack = document.getElementById('courses-stack');
+      var html = buildPrimaryCard(courses[0], isCurriculum);
+      if (!isCurriculum) {
+        for (var i = 1; i < primaryCount; i++) {
+          html += buildSecondaryCard(courses[i], i);
+        }
+      }
+      stack.innerHTML = html;
+
+      // Additional courses (6+)
+      var addSection = document.getElementById('additional-section');
+      if (extraCourses.length > 0) {
+        document.getElementById('additional-courses-stack').innerHTML =
+          extraCourses.map(function(c, i) { return buildAdditionalCard(c, primaryCount + i + 1); }).join('');
+        addSection.style.display = 'block';
+      } else {
+        addSection.style.display = 'none';
+      }
+
+      // Sticky bar
+      var stickyLink  = document.getElementById('sticky-bar-link');
+      var stickyTitle = document.getElementById('sticky-bar-course-title');
+      var ctaText     = isCurriculum ? 'Start This Curriculum' : 'Start Course 1';
+      stickyTitle.textContent = isCurriculum ? courses[0].title : 'Course 1: ' + courses[0].title;
+      stickyLink.href         = courses[0].url;
+      stickyLink.innerHTML    = ctaText + ' ' + ARROW_SVG;
+
+      // Page title
+      document.title = data.first_name + '\u2019s Learning Plan | MetEd';
+
+      // IntersectionObserver
+      var stickyBar = document.getElementById('sticky-bar');
+      var target    = document.querySelector('.course-card.primary');
+      if (target && stickyBar) {
+        new IntersectionObserver(function(entries) {
+          stickyBar.style.opacity       = entries[0].isIntersecting ? '0' : '1';
+          stickyBar.style.pointerEvents = entries[0].isIntersecting ? 'none' : 'auto';
+          stickyBar.style.transition    = 'opacity 0.25s ease';
+        }, { threshold: 0.5 }).observe(target);
+      }
+    }
+
+    // ── INIT ────────────────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', function() {
+      var data = FALLBACK_PLAN;
+      try {
+        var stored = sessionStorage.getItem('meted_learning_plan');
+        if (stored) { data = JSON.parse(stored); }
+      } catch(e) { /* use fallback */ }
+      renderPlan(data);
+    });
+  </script>
+
+</body>
+</html>
