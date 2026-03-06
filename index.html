@@ -2173,6 +2173,7 @@
     function startLoadingState() {
       var payload = collectFormPayload();
       form.style.display = 'none';
+      document.getElementById('modal-close-btn').style.display = 'none';
       const loadingEl = document.getElementById('modal-loading');
       loadingEl.style.display = 'block';
       document.querySelector('.modal-body').scrollTop = 0;
@@ -2421,6 +2422,7 @@
     function showReadyState() {
       document.getElementById('modal-loading').style.display = 'none';
       document.getElementById('modal-ready').style.display   = 'block';
+      document.getElementById('modal-close-btn').style.display = '';
       document.querySelector('.modal-body').scrollTop = 0;
     }
 
@@ -2428,6 +2430,7 @@
       // Fallback: restore submit button so user can retry
       form.style.display = 'block';
       document.getElementById('modal-loading').style.display = 'none';
+      document.getElementById('modal-close-btn').style.display = '';
       submitBtn.disabled  = false;
       submitBtn.innerHTML = 'Try Again';
     }
