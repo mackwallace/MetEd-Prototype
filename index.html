@@ -2122,8 +2122,8 @@
     // ── CASSIDY CREDENTIALS ──────────────────────────────────────────────────
     // Set these to go live. Leave CASSIDY_WEBHOOK_URL empty to run in
     // simulation mode (useful for UI testing without a real API call).
-    var CASSIDY_WEBHOOK_URL = '';  // e.g. 'https://app.cassidy.ai/webhooks/...'
-    var CASSIDY_API_KEY     = '';  // e.g. 'Bearer sk-cass-...'
+    var CASSIDY_WEBHOOK_URL = 'https://meted-learning-plan-proxy.s-mackenzie-wallace.workers.dev';
+    var CASSIDY_API_KEY     = '';  // auth handled by Cloudflare Worker
 
     // Collects all form field values into the Cassidy webhook payload
     function collectFormPayload() {
