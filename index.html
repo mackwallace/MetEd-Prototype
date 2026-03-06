@@ -2293,43 +2293,52 @@
     };
 
     // ── CASSIDY PAYLOAD → FLAT SCHEMA TRANSFORM ────────────────────────────
-    // Maps the raw Cassidy webhook response to the flat schema the results
-    // page expects. Call this on the real API response when the webhook is wired.
+    // Cassidy sends several fields as JSON strings — parse them safely first.
     function transformCassidyPayload(raw) {
-      var fullName  = (raw.user && raw.user.name) ? raw.user.name : 'there';
+      function safeParse(val) {
+        if (val && typeof val === 'object') return val;
+        if (typeof val !== 'string') return {};
+        // Strip occasional "json\n" prefix Cassidy prepends
+        var cleaned = val.replace(/^json\s*/i, '').trim();
+        try { return JSON.parse(cleaned); } catch(e) { return {}; }
+      }
+
+      var user      = safeParse(raw.user);
+      var narrative = safeParse(raw.personalized_narrative);
+
+      var fullName  = (user.name || '').trim() || 'there';
       var firstName = fullName.split(' ')[0];
 
-      var narrative      = raw.personalized_narrative || {};
-      var welcome        = (narrative.welcome && narrative.welcome.intro) ? narrative.welcome.intro : '';
-      var transformation = narrative.transformation || {};
-      var timeline       = narrative.timeline || {};
+      var welcomeSection = narrative['Welcome Section'] || {};
+      var timeline       = narrative['Timeline']        || {};
+      var transformation = narrative['Transformation']  || {};
 
-      // Extract "X-Y hours" from pace string before the first comma
-      var pace    = timeline.pace || '';
+      // Extract the "X hours" portion before the first comma in Pace
+      var pace    = timeline['Pace'] || '';
       var perWeek = pace.split(',')[0].trim();
 
-      // Curriculum detection: results page checks if courses.length === 1 and title contains "curriculum"
-      var courses = (narrative.courses || []).map(function(c) {
+      // Curriculum detection: results page checks courses.length === 1 and title contains "curriculum"
+      var courses = (narrative['Courses'] || []).map(function(c) {
         return {
-          title:     c.title,
-          url:       c.url,
-          duration:  c.duration,
-          level:     c.skill_level || c.level || 'Basic',
-          rationale: c.description || c.rationale || ''
+          title:     c['Title']       || c.title       || '',
+          url:       c['URL']         || c.url          || '',
+          duration:  c['Duration']    || c.duration     || '',
+          level:     c['Skill Level'] || c.skill_level  || c.level || 'Basic',
+          rationale: c['Description'] || c.description  || c.rationale || ''
         };
       });
 
       return {
         first_name:    firstName,
         plan_title:    'Your Personalized Learning Plan',
-        welcome:       welcome,
-        now:           transformation.now    || '',
-        after:         transformation.after  || '',
-        impact:        transformation.impact || '',
-        total_hours:   timeline.total_hours       || '',
+        welcome:       welcomeSection['Introduction']       || '',
+        now:           transformation['Current State']      || '',
+        after:         transformation['Future State']       || '',
+        impact:        transformation['Impact/Result']      || '',
+        total_hours:   timeline['Total Hours']              || '',
         per_week:      perWeek,
-        weeks:         timeline.suggested_timeline || '',
-        timeline_note: narrative.call_to_action    || '',
+        weeks:         timeline['Suggested Timeline']       || '',
+        timeline_note: narrative['Call to Action']          || '',
         courses:       courses
       };
     }
