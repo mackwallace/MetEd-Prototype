@@ -2059,7 +2059,7 @@
     const advancedSection  = document.getElementById('advanced-section');
 
     knowledgeEl.addEventListener('change', function () {
-      const showAdvanced = ['intermediate', 'advanced', 'expert'].includes(this.value);
+      const showAdvanced = ['Intermediate', 'Advanced', 'Expert'].includes(this.value);
       advancedSection.classList.toggle('visible', showAdvanced);
       validateForm();
     });
